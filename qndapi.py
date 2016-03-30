@@ -3,7 +3,18 @@
 from os import path
 import dumbyaml as yaml
 import requests
+from smtplib import SMTP
+from email.mime.text import MIMEText
+from datetime import datetime
 
+ERROR_MAIL = """
+<p>Hello,</br>
+The amazing Quick 'n' Dirty API tester failed to assert that the path</br>
+<b>{path}</b> returned a HTTP-200 code.</br>
+The test was performed at {datetime}</br></p>
+<p>Best of luck,</br>
+QNDAPI<p>
+"""
 
 def main():
     try:
@@ -19,8 +30,15 @@ def main():
 
         for endpoint in endpoints:
             request = requests.get(endpoint)
-            assert request.status_code == 200
+            try:
+                assert request.status_code == 200
+            except AssertionError:
+                now = datetime.now().strftime("%d/%m/%Y @ %Hh%mmin")
+                message = ERROR_MAIL.format(path=endpoint, datetime=now)
+                print(message)
     except:
         raise
+
+
 if __name__ == "__main__":
     main()
