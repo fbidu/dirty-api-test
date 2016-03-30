@@ -3,8 +3,6 @@
 from os import path
 import dumbyaml as yaml
 import requests
-from smtplib import SMTP
-from email.mime.text import MIMEText
 from datetime import datetime
 
 ERROR_MAIL = """
@@ -35,7 +33,9 @@ def main():
             except AssertionError:
                 now = datetime.now().strftime("%d/%m/%Y @ %Hh%mmin")
                 message = ERROR_MAIL.format(path=endpoint, datetime=now)
-                print(message)
+                message = MIMEText(message, 'html')
+                message['Subject'] = "QNDAPIT Error"
+
     except:
         raise
 
