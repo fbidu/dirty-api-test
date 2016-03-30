@@ -2,3 +2,7 @@ venv/
 *.pyc
 *.*~
 __pycache__/
+APIs:
+  http://proxy.adtsys.devnup.com/:
+    - /api/health
+    - /api/metrics
