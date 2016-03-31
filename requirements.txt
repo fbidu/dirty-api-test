@@ -1,0 +1,4 @@
+PyYAML==3.11
+dumbyaml==0.9.3
+peewee==2.8.0
+requests==2.9.1
