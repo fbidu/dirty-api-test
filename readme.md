@@ -1,8 +1,10 @@
 # Quick 'n' Dirty API Tester
 
 This gotta be the simplest and easiest API tester in the market.
+
 Quite simply, you just add a bunch of APIs' addresses and some endpoints in the `config.yaml` file. The program will then loop through all of them, try to connect to them, check if the endpoint returned an HTTP-200. If anything goes wrong, it shoots an email.
 Very useful to use with a `cron` job to test periodically.
+
 Unfortunately, it is not use-ready just yet. The whole email sending thing is non functional as I'm using an internal API of mine to do the job. I'll allow for SMTP soon.
 
 ## Installing
@@ -16,6 +18,7 @@ Unfortunately, it is not use-ready just yet. The whole email sending thing is no
 
 ## Usage
 Well you can just run the code manually. Being with the virtualenvironment set just run `python qndapi.py`
+
 You can also set up a cron job. Keep in mind that you'll **have to reference to the Python binary inside the virtual environment!**
 Your cron command should be something like: `/path-to-qndapi/venv/bin/python /path-to-qndapi/qndapi.py`
 
