@@ -5,7 +5,7 @@ import dumbyaml as yaml
 import requests
 import json
 from datetime import datetime
-
+from model import Log
 
 ERROR_MAIL = """
 <p>Hello,</br>
@@ -29,27 +29,37 @@ def main():
                          for endpoint in list(apis[api])]
 
         for endpoint in endpoints:
-            request = requests.get(endpoint)
             try:
-                assert request.status_code == 200
-            except AssertionError:
-                now = datetime.now().strftime("%d/%m/%Y @ %Hh%mmin")
-                message = ERROR_MAIL.format(path=endpoint, datetime=now)
-                subject = "QNDAPIT Error!"
-                receiver = str(config['email']['receiver'])
-                driver = str(config['email']['driver'])
+                request = requests.get(endpoint, timeout=2)
+            except:
+                Log(line='Connection error', api=api, endpoint=endpoint,
+                    timestamp=datetime.now()).save()
+            else:
+                try:
+                    assert request.status_code == 200
+                except AssertionError:
+                    Log(line='Error!', api=api, endpoint=endpoint,
+                        timestamp=datetime.now()).save()
+                    now = datetime.now().strftime("%d/%m/%Y @ %Hh%mmin")
+                    message = ERROR_MAIL.format(path=endpoint, datetime=now)
+                    subject = "QNDAPIT Error!"
+                    receiver = str(config['email']['receiver'])
+                    driver = str(config['email']['driver'])
 
-                if driver == 'devnup-email':
-                    api_data = {
-                        'token': str(config['email']['token']),
-                        'message': {
-                            'to': receiver,
-                            'subject': subject,
-                            'body': message
+                    if driver == 'devnup-email':
+                        api_data = {
+                            'token': str(config['email']['token']),
+                            'message': {
+                                'to': receiver,
+                                'subject': subject,
+                                'body': message
+                            }
                         }
-                    }
-                    requests.post('http://email.devnup.com/api/gateway/send',
-                                  data=json.dumps(api_data))
+                        requests.post('http://email.devnup.com/api/gateway/send',
+                                      data=json.dumps(api_data))
+                else:
+                    Log(line='Success', api=api,
+                        endpoint=endpoint, timestamp=datetime.now()).save()
     except:
         raise
 
