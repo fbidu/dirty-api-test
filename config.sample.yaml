@@ -1,0 +1,12 @@
+APIs:
+  http://api.address.com:
+    - /endpoint1
+    - /endpoint2
+  http://user:password@anotherapi.com:
+    - /api/endpoint/json
+    - /api/endpoint
+
+email:
+  receiver: "email@server"
+  token: "token"
+  driver: "api to send email"
