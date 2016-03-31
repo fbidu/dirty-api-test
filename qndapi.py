@@ -3,7 +3,9 @@
 from os import path
 import dumbyaml as yaml
 import requests
+import json
 from datetime import datetime
+
 
 ERROR_MAIL = """
 <p>Hello,</br>
@@ -11,7 +13,7 @@ The amazing Quick 'n' Dirty API tester failed to assert that the path</br>
 <b>{path}</b> returned a HTTP-200 code.</br>
 The test was performed at {datetime}</br></p>
 <p>Best of luck,</br>
-QNDAPI<p>
+QNDAPIT<p>
 """
 
 def main():
@@ -33,9 +35,21 @@ def main():
             except AssertionError:
                 now = datetime.now().strftime("%d/%m/%Y @ %Hh%mmin")
                 message = ERROR_MAIL.format(path=endpoint, datetime=now)
-                message = MIMEText(message, 'html')
-                message['Subject'] = "QNDAPIT Error"
+                subject = "QNDAPIT Error!"
+                receiver = str(config['email']['receiver'])
+                driver = str(config['email']['driver'])
 
+                if driver == 'devnup-email':
+                    api_data = {
+                        'token': str(config['email']['token']),
+                        'message': {
+                            'to': receiver,
+                            'subject': subject,
+                            'body': message
+                        }
+                    }
+                    requests.post('http://email.devnup.com/api/gateway/send',
+                                  data=json.dumps(api_data))
     except:
         raise
 
