@@ -1,9 +1,11 @@
 #! python3.4
 # -*- encoding: utf-8 -*-
+"""
+Main module!
+"""
 from os import path
 import dumbyaml as yaml
 import requests
-import json
 from datetime import datetime
 from model import Log
 
@@ -25,7 +27,11 @@ The test was performed at {datetime}</br></p>
 QNDAPIT<p>
 """
 
+
 def main():
+    """
+    Module's main function
+    """
     try:
         # Loading the settings
         current_dir = path.dirname(__file__)
@@ -51,6 +57,9 @@ def main():
 
 
 def test_endpoint(api, endpoint, config, expected_code=200):
+    """
+    Function that tests an endpoint
+    """
     url = api + endpoint
     now = datetime.now()
     try:
@@ -63,8 +72,8 @@ def test_endpoint(api, endpoint, config, expected_code=200):
     else:
         # If we succeed.
         try:
-            # We try to assert that the response was 200
-            assert request.status_code == 200
+            # We try to assert that the response was the expected
+            assert request.status_code == expected_code
         except AssertionError:
             # If we fail...
             Log(line='HTTP Error', api=api, endpoint=endpoint,
@@ -86,6 +95,9 @@ def test_endpoint(api, endpoint, config, expected_code=200):
 
 
 def send_assertion_error_email(token, receiver, subject, message):
+    """
+    Function that send an assertion error email
+    """
     api_data = {
         'token': token,
         'message': {
