@@ -1,5 +1,8 @@
 # Quick 'n' Dirty API Tester
 
+[![Code Climate](https://codeclimate.com/github/fbidu/dirty-api-test/badges/gpa.svg)](https://codeclimate.com/github/fbidu/dirty-api-test)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/4b04cfef69a7466b9dcc9baf9412818c)](https://www.codacy.com/app/bidu-pub/dirty-api-test)
+
 This gotta be the simplest and easiest API tester in the market.
 
 Quite simply, you just add a bunch of APIs' addresses and some endpoints in the `config.yaml` file. The program will then loop through all of them, try to connect to them, check if the endpoint returned an HTTP-200. If anything goes wrong, it shoots an email.
