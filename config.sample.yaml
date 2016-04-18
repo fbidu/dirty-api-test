@@ -10,3 +10,10 @@ email:
   receiver: "email@server"
   token: "token"
   driver: "api to send email"
+
+smtp:
+  user: "authenticate with..."
+  password: "the auth pass"
+  server: "smtp host"
+  port: "smtp port"
+
