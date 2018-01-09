@@ -1,14 +1,27 @@
 #! python3.4
 # -*- encoding: utf-8 -*-
 """
-Main module!
+## Quick and Dirty Api Tester - _QNDAPI_
+
+This program aims to be a very simples API tester. This is its main module.
 """
+
+# Importing the path so I can find the current directory
 from os import path
+from sys import exit
+# Importing an YAML parser
 import dumbyaml as yaml
+# Importing the YAMLError so that I can handle this kind of error properly
+from yaml.error import YAMLError
+# Importing the Requests library, to make HTTP requests
 import requests
+# Importing the datetime, to process the current date and time
 from datetime import datetime
+# Importing the Log class from the model module
 from model import Log
 
+# This is the e-mail message I'll send if any endpoint fails to send me a
+# `HTTP-200 "OK"` code
 ASSERTION_ERROR_MAIL = """
 <p>Hello,</br>
 The amazing Quick 'n' Dirty API tester failed to assert that the path</br>
@@ -18,6 +31,8 @@ The test was performed at {datetime}</br></p>
 QNDAPIT<p>
 """
 
+# This other e-mail message will be used if I'm not able to even connect to a
+# host
 CONNECTION_ERROR_MAIL = """
 <p>Hello,</br>
 The amazing Quick 'n' Dirty API tester failed to connect to</br>
@@ -30,30 +45,52 @@ QNDAPIT<p>
 
 def main():
     """
-    Module's main function
+    This is the module's main function.
+    It works, but it needs a little refactoring
     """
+    # We'll start by trying to load the configuration file
     try:
-        # Loading the settings
-        current_dir = path.dirname(__file__)
+        # First we find out the current directory
+        current_dir = path.dirname(path.abspath(__file__))
+
+        # Then we append our the configuration filename to it, creating the
+        # configuration file's path
         config_path = path.join(current_dir, 'config.yaml')
+
+        # Finally, we open the file, read its contents and load it as a YAML file
         config = yaml.load(open(config_path).read())
 
-        apis = config['APIs']
-
-        # For each API
-        for api in apis.keys():
-            # Load the endpoints
-            api = str(api)
-            endpoints = list(apis[api])
-
-            # For each endpoint
-            for endpoint in endpoints:
-                endpoint = str(endpoint)
-                test_endpoint(api, endpoint, config)
-
     # If we fail to load the config file
-    except:
-        raise
+    except FileNotFoundError:
+        print(
+            "Sorry, I could not read the configuration file!\n" +
+            "Please, make sure there is a valid config.yaml file at {dirname}"
+            .format(dirname=current_dir)
+        )
+        exit(1)
+
+    except YAMLError as yaml_error:
+        print(
+            "Sorry, I did find a file at {configpath} but it does not " +
+            "seem to be a valid YAML file.\nAnyway, here's the error I got:\n\n\t" +
+            str(yaml_error)
+        )
+        exit(1)
+
+    apis = config['APIs']
+
+    # For each API
+    for api in apis.keys():
+        # Load the endpoints
+        api = str(api)
+        endpoints = list(apis[api])
+
+        # For each endpoint
+        for endpoint in endpoints:
+            endpoint = str(endpoint)
+            test_endpoint(api, endpoint, config)
+
+
 
 
 def test_endpoint(api, endpoint, config, expected_code=200):
